@@ -1,0 +1,92 @@
+﻿@using BugFixer.Application.Extensions
+@model BugFixer.Application.Contract.UserPanel.QuestionPanel.FilterQuestionBookMarksDto
+
+@{
+    ViewData["Title"] = "سوالات نشان شده";
+    Layout = "_UserPanelLayout";
+}
+
+@section Breadcrumb
+{
+    <li itemtype="http://schema.org/ListItem" itemscope itemprop="itemListElement">
+        <a href="javascript:void(0)" itemprop="item">
+            <span itemprop="name"> @ViewData["Title"] </span>
+        </a>
+    </li>
+}
+
+<section class="questions-layer layer-style">
+    <header>
+        <h2>
+            <i>@ViewData["Title"]</i>
+        </h2>
+    </header>
+
+    <form method="get" asp-action="QuestionBookmarks" asp-controller="Question" asp-area="UserPanel" id="filter_form">
+        <input type="hidden" asp-for="CurrentPage" />
+    </form>
+
+    @if (Model.Entities.Any())
+    {
+        @foreach (var question in Model.Entities)
+        {
+            <!-- item -->
+            <article>
+                <h3>
+                    <a asp-action="QuestionDetail" asp-controller="Question" asp-route-questionId="@question.QuestionId"> @question.Title </a> <span> @question.CreateDate </span>
+                </h3>
+                <div class="detail">
+                    <span><i class="icon-eye"></i> @question.ViewCount بازدید </span>
+                    <span><i class="icon-star"></i> @question.Score امتیاز </span>
+                </div>
+            </article>
+            <!-- item -->
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            آیتمی یافت نشد.
+        </div>
+    }
+ 
+</section>
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+        .pagination a {
+            padding: 8px 12px;
+            background-color: white;
+            color: green;
+            border: 2px solid green;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+            .pagination a:hover {
+                background-color: green;
+                color: white;
+            }
+
+            .pagination a.active {
+                background-color: green;
+                color: white;
+                border-color: green;
+            }
+</style>
+
+<div class="pagination">
+    @if (Model.TotalPage > 1)
+    {
+        for (int i = 1; i <= Model.TotalPage; i++)
+        {
+            <a href="?CurrentPage=@i" class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
+        }
+    }
+</div>

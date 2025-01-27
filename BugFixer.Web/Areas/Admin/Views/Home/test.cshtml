@@ -1,0 +1,96 @@
+﻿@using BugFixer.Application.Contract.Admin
+@model BugFixer.Application.Contract.Admin.FilterTagAdminDto
+
+<div class="container">
+    <h2>مدیریت تگ‌ها</h2>
+    <form class="form-horizontal mb-3" asp-action="test" asp-controller="Home" method="get" id="filterForm">
+        <div class="row">
+            <div class="col-md-5">
+                <input type="text" asp-for="Title" placeholder="عنوان تگ" class="form-control" />
+            </div>
+            <div class="col-md-5">
+                <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList(typeof(FilterTagAdminStatus))"></select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success btn-block">اعمال فیلتر</button>
+            </div>
+        </div>
+    </form>
+
+    @if (Model.Entities.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">عنوان</th>
+                        <th class="text-center">تعداد استفاده</th>
+                        <th class="text-center">وضعیت</th>
+                        <th class="text-center">امکانات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tag in Model.Entities)
+                    {
+                        <tr>
+                            <td>@tag.Title</td>
+                            <td>@tag.UseCount</td>
+                            <td>@(string.IsNullOrEmpty(tag.Description) ? "توضیحات ندارد" : "توضیحات دارد")</td>
+                            <td>
+                                <a asp-action="Delete" asp-controller="Home" asp-route-id="@tag.Id" class="btn btn-danger btn-xs">
+                                    حذف
+                                </a>
+                                <a asp-action="Edit" asp-controller="Home" asp-route-id="@tag.Id" class="btn btn-primary btn-xs">
+                                    ویرایش
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            هیچ تگی یافت نشد.
+        </div>
+    }
+
+    @if (Model.TotalPage > 1)
+    {
+        <nav>
+            <ul class="pagination justify-content-center">
+                @for (int i = 1; i <= Model.TotalPage; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link pagination-link"
+                           href="javascript:void(0)"
+                           data-page="@i">
+                            @i
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
+
+<script>
+    // مدیریت صفحه‌بندی بدون حذف فیلترها
+    document.querySelectorAll(".pagination-link").forEach(link => {
+        link.addEventListener("click", function () {
+            const page = this.getAttribute("data-page");
+            const form = document.getElementById("filterForm");
+
+            // افزودن مقدار صفحه به فرم
+            const pageInput = document.createElement("input");
+            pageInput.type = "hidden";
+            pageInput.name = "CurrentPage";
+            pageInput.value = page;
+
+            form.appendChild(pageInput);
+            form.submit();
+        });
+    });
+</script>

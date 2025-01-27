@@ -1,0 +1,17 @@
+﻿@using BugFixer.Application.Contract.DTOS.Question
+@model  FilterTagDto
+
+<!-- most controversial tags -->
+<section class="most-controversial-tags">
+    <header><h2> پر بحث ترین تگ ها </h2></header>
+    <div class="tags-layer">
+        @if (Model != null && Model.Entities.Any())
+        {
+            @foreach (var tag in Model.Entities)
+            {
+                <a asp-action="QuestionListBtTag" asp-controller="Question" asp-route-tagName="@tag.Title"> @tag.Title </a>
+            }
+        }
+    </div>
+</section>
+<!-- /most controversial posts -->
